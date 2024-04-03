@@ -56,5 +56,11 @@
   
   <li>The application uses ffmpeg for merging video and audio streams, so make sure ffmpeg is installed and accessible in your system's PATH environment variable.</li>
 </ul>
+Installation of FFmpeg:
+Windows:
+Download FFmpeg:
 
+Go to the official FFmpeg website:[ https://ffmpeg.org/download.html](https://github.com/BtbN/FFmpeg-Builds/releases/tag/latest)
+Under "Windows Builds", select the link corresponding to your system architecture (32-bit or 64-bit).
+Download the static build (e.g., ffmpeg-xxx-win64-static.zip).
 </body>
