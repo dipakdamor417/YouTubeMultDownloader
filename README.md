@@ -56,11 +56,37 @@
   
   <li>The application uses ffmpeg for merging video and audio streams, so make sure ffmpeg is installed and accessible in your system's PATH environment variable.</li>
 </ul>
-Installation of FFmpeg:
-Windows:
-Download FFmpeg:
+<h2>Installation of FFmpeg:</h2>
 
-Go to the official FFmpeg website:[ https://ffmpeg.org/download.html](https://github.com/BtbN/FFmpeg-Builds/releases/tag/latest)
-Under "Windows Builds", select the link corresponding to your system architecture (32-bit or 64-bit).
-Download the static build (e.g., ffmpeg-xxx-win64-static.zip).
-</body>
+<p><strong>Windows:</strong></p>
+
+<ol>
+  <li><strong>Download FFmpeg:</strong></li>
+  <ul>
+    <li>Go to the official FFmpeg builds page on GitHub: <a href="https://github.com/BtbN/FFmpeg-Builds/releases/latest">FFmpeg-Builds Releases</a>.</li>
+    <li>Under "Windows Builds", select the link corresponding to your system architecture (32-bit or 64-bit).</li>
+    <li>Download the static build (e.g., <code>ffmpeg-xxx-win64-static.zip</code>).</li>
+  </ul>
+</ol>
+
+<h3>Setting Environmental Variable:</h3>
+
+<p>After downloading FFmpeg, you need to add its directory to the PATH environmental variable to make it accessible from the command line.</p>
+
+<ol>
+  <li><strong>Extract FFmpeg:</strong></li>
+  <ul>
+    <li>Extract the contents of the downloaded ZIP file to a directory on your computer (e.g., <code>C:\ffmpeg</code>).</li>
+  </ul>
+  
+  <li><strong>Add FFmpeg to PATH:</strong></li>
+  <ul>
+    <li>Right-click on "This PC" or "My Computer" and select "Properties".</li>
+    <li>Click on "Advanced system settings" on the left sidebar.</li>
+    <li>In the System Properties window, click on the "Environment Variables" button.</li>
+    <li>Under "System variables", select the "Path" variable and click on "Edit".</li>
+    <li>Click on "New" and add the path to the directory where you extracted FFmpeg (e.g., <code>C:\ffmpeg\bin</code>). Make sure to separate it from other paths with a semicolon (;).</li>
+    <li>Click "OK" to save the changes and close all windows.</li>
+  </ul>
+</ol>
+
