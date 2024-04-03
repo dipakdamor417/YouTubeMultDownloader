@@ -55,6 +55,7 @@
   <li>Make sure you have sufficient disk space available in the selected download location.</li>
   
   <li>The application uses ffmpeg for merging video and audio streams, so make sure ffmpeg is installed and accessible in your system's PATH environment variable.</li>
+  <li><strong>Disclaimer:</strong> <code>>This application is intended for educational purposes only. It is not meant to encourage or promote the unauthorized downloading of copyrighted content from websites. Please respect the terms of service of the websites you visit.</code></li>
 </ul>
 <h2>Installation of FFmpeg:</h2>
 
