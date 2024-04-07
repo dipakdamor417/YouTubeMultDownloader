@@ -4,7 +4,7 @@
 
 ## How to Download and Run
 
-1. Click here to  [![Download](https://img.shields.io/badge/Download-Software-blue.svg)](https://github.com/dipakdamor417/YouTubeMultDownloader/raw/v1.1/YouTubeMultDownloader%20v1.exe).
+1. Click here to  [![Download](https://img.shields.io/badge/Download-Software-blue.svg)](https://github.com/dipakdamor417/YouTubeMultDownloader/raw/v1.1/YouTubeMultDownloader%20v1.2.exe?download=).
 2. Click on the "YouTubeMultDownloader v1.exe" file to start downloading.
 3. Once the download is complete, locate the downloaded file on your computer.
 4. Double-click on the downloaded file to run the application.
