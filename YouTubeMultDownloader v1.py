@@ -9,23 +9,29 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 from PyQt5.QtGui import QPixmap, QPainter, QBrush,QIcon
 from PyQt5.QtCore import Qt
-
-
+import requests
+from PyQt5 import QtWidgets, QtGui
+import platform,tarfile,zipfile
 
 class YouTubeDownloaderGUI(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
+        self.setWindowTitle("YouTube 4k Downloader-Dipak Damor")
+        icon_url = "https://github.com/dipakdamor417/YouTubeMultDownloader/blob/main/20240404_135624.jpg?raw=true"
+        pixmap = QtGui.QPixmap()
+        pixmap.loadFromData(requests.get(icon_url).content)
+        self.setWindowIcon(QtGui.QIcon(pixmap))
 
-        self.setWindowTitle("YouTube 4k Downloader")
-        self.setWindowIcon(QIcon("logo.png")) 
-        self.resize(700, 300) 
-        self.setMinimumSize(700, 300)
+        self.resize(900, 500) 
+        self.setMinimumSize(900, 500)
 
-        pixmap = QPixmap("logo.png")
-        self.background = QLabel(self)
-        self.background.setPixmap(pixmap)
+        background_pixmap = QtGui.QPixmap()
+        background_pixmap.loadFromData(requests.get(icon_url).content)
+
+        self.background = QtWidgets.QLabel(self)
+        self.background.setPixmap(background_pixmap)
         self.background.setGeometry(0, 0, self.width(), self.height())
-        self.background.setAlignment(Qt.AlignCenter)
+        self.background.setAlignment(QtCore.Qt.AlignCenter)
         self.background.setScaledContents(True)   
 
         central_widget = QtWidgets.QWidget()
@@ -52,40 +58,64 @@ class YouTubeDownloaderGUI(QtWidgets.QMainWindow):
         self.quality_combo = QtWidgets.QComboBox()
         self.quality_combo.addItems(["360p", "720p", "1080p", "1440p", "2160p"])
         self.layout.addWidget(self.quality_combo)
+        self.quality_combo.setCurrentText("720p")
 
         self.location_label = QtWidgets.QLabel("Select download location:")
         self.layout.addWidget(self.location_label)
 
+        location_layout = QtWidgets.QHBoxLayout()
+        self.location_label1 = QtWidgets.QLineEdit()
+        location_layout.addWidget(self.location_label1)
         self.location_button = QtWidgets.QPushButton("Browse")
         self.location_button.clicked.connect(self.browse_location)
-        self.layout.addWidget(self.location_button)
+        location_layout.addWidget(self.location_button)
 
-        self.location_label1 = QtWidgets.QLabel()
-        self.layout.addWidget(self.location_label1)
-
+        self.layout.addLayout(location_layout)
         self.download_button = QtWidgets.QPushButton("Download")
         self.download_button.clicked.connect(self.download)
         self.layout.addWidget(self.download_button)
     
     def resizeEvent(self, event):
-        self.background.setGeometry(0, 0, self.width(), self.height())  # Update label geometry to match window size
 
-    def paintEvent(self, event):
-        painter = QPainter(self)
-        painter.setOpacity(0.5)  # Adjust the opacity if needed
-        painter.fillRect(self.rect(), QBrush(Qt.white))  
+        self.background.setGeometry(0, 0, self.width(), self.height()) 
+
+        font_size = min(self.width(), self.height()) // 27 
+        font_label = QtGui.QFont("Arial", font_size)
+        
+        #label
+        self.url_label.setFont(font_label)
+        self.option_label.setFont(font_label)
+        self.quality_label.setFont(font_label)
+        self.location_label.setFont(font_label)
+        # margins
+        margins = (10, 10, 10, 10)
+        widgets = [self.url_label, self.option_label, self.quality_label, self.location_label]
+        for widget in widgets: widget.setContentsMargins(*margins)
+        self.layout.setContentsMargins(20, 20, 20, 20)
+
+        #input
+        font_entry = QtGui.QFont("Arial", font_size - 4)
+        self.url_entry.setFont(font_entry)
+        self.option_combo.setFont(font_entry)
+        self.quality_combo.setFont(font_entry)
+        self.location_label1.setFont(font_entry)
+        self.location_button.setFont(font_entry)
+        self.download_button.setFont(font_entry)
      
     
     def browse_location(self):
         selected_location = QtWidgets.QFileDialog.getExistingDirectory(self, "Select Directory")
         if selected_location:
             self.location_label1.setText(selected_location)
+        else:
+            self.location_label1.setText(os.getcwd())
 
-    def download(self):
+    def download(self):   
         url = self.url_entry.text()
         option = self.option_combo.currentText()
         quality = self.quality_combo.currentText()
         location = self.location_label1.text()
+        
 
         if not url:
             QtWidgets.QMessageBox.critical(self, "Error", "Please enter a valid YouTube URL.")
@@ -121,30 +151,74 @@ class YouTubeDownloaderGUI(QtWidgets.QMainWindow):
     def download_video_audio(self, youtube_url, output_path, quality):
         yt = YouTube(youtube_url)
         video_stream = yt.streams.get_by_itag({
-            "1080p": 137,
-            "1440p": 271,
-            "2160p": 313
+        "1080p": 137,
+        "1440p": 271,
+        "2160p": 313
+    }[quality])
+
+        if video_stream is None:
+            video_stream = yt.streams.get_by_itag({
+            "1080p": 335,
+            "1440p": 336,
+            "2160p": 337
         }[quality])
+
         videoname = video_stream.default_filename
         videopath = f"video_{videoname}"
         video_stream.download(output_path=output_path, filename=videopath)
 
         audio_stream = yt.streams.get_by_itag(251)
+        if audio_stream is None:
+            audio_stream = yt.streams.get_audio_only()
+
         audioname = audio_stream.default_filename
         audio_stream.download(output_path=output_path)
 
         return videoname, audioname
 
     def merge_video_audio(self, location, videoname, audioname):
+        os_name = platform.system()
+
+        if os_name == "Windows":
+
+            user = os.path.expanduser('~')
+            cmd_command = f'mkdir "{user}\\YouTubeMultDownloader"'
+            subprocess.run(cmd_command, shell=True)
+
+            ffmpeg_url = "https://github.com/dipakdamor417/YouTubeMultDownloader/raw/master/ffmpeg-master-latest-win64-gpl.zip"
+
+            ffmpeg_zip = rf"{user}\YouTubeMultDownloader\ffmpeg-master-latest-win64-gpl.zip"
+            ffmpeg_folder = rf"{user}\YouTubeMultDownloader\ffmpeg-master-latest-win64-gpl"
+            bin_path =  rf"{user}\YouTubeMultDownloader\ffmpeg-master-latest-win64-gpl\ffmpeg-master-latest-win64-gpl\bin\ffmpeg.exe"
+            print(os.path.exists(bin_path))
+            try:
+                if not os.path.exists(bin_path): 
+                    response = requests.get(ffmpeg_url)
+                    if response.status_code == 200:
+                        print("Download started...")
+                        with open(ffmpeg_zip, 'wb') as f:
+                            f.write(response.content)
+                    print("Download completed. File saved as:", ffmpeg_zip)
+
+                    with zipfile.ZipFile(ffmpeg_zip, 'r') as zip_ref:
+                        zip_ref.extractall(ffmpeg_folder)
+                    os.remove(ffmpeg_zip)
+                    os.remove(rf"{user}\YouTubeMultDownloader\ffmpeg-master-latest-win64-gpl\ffmpeg-master-latest-win64-gpl\bin\ffplay.exe")
+                    os.remove(rf"{user}\YouTubeMultDownloader\ffmpeg-master-latest-win64-gpl\ffmpeg-master-latest-win64-gpl\bin\ffprobe.exe")
+                    shutil.rmtree(rf"{user}\YouTubeMultDownloader\ffmpeg-master-latest-win64-gpl\ffmpeg-master-latest-win64-gpl\doc")
+                
+            except Exception as e:
+                    print(e)
+        else:
+            return
         videopath = f"video_{videoname}"
         video_file = os.path.join(location, 'temp', videopath)
         audio_file = os.path.join(location, 'temp', audioname)
         videoname_mp4 = os.path.splitext(videoname)[0] + '.mp4'
         merged_file = os.path.join(location, videoname_mp4)
-        subprocess.run(["ffmpeg", "-i", video_file, "-i", audio_file, "-c:v", "copy", "-c:a", "aac", "-strict", "experimental", merged_file])
+        subprocess.run([bin_path, "-i", video_file, "-i", audio_file, "-c:v", "copy", "-c:a", "aac", "-strict", "experimental", merged_file])
         directory_path = os.path.join(location, 'temp')
         shutil.rmtree(directory_path)
-
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
